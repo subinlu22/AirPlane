@@ -43,3 +43,9 @@
 
 # MCP for Unity (개발 도구, 94MB라 레포에 올리지 않음)
 /Packages/com.coplaydev.unity-mcp/
+
+# Cesium ion 접속 토큰이 저장되는 파일 (공개 레포라 올리지 않음, 각자 로그인하면 다시 생성됨)
+/Assets/CesiumSettings/Resources/CesiumIonServers/*.asset
+/Assets/CesiumSettings/Resources/CesiumIonServers/*.asset.meta
+/Assets/CesiumSettings/Resources/CesiumRuntimeSettings.asset
+/Assets/CesiumSettings/Resources/CesiumRuntimeSettings.asset.meta
