@@ -347,7 +347,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 433407525}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13198896, y: 0.126114, z: -0.01693266, w: 0.9830501}
+  m_LocalRotation: {x: 0.099394806, y: 0.1266051, z: -0.012751204, w: 0.9868786}
   m_LocalPosition: {x: -111.2, y: 231.3, z: -904.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -596,7 +596,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1552165713}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13198896, y: 0.126114, z: -0.01693266, w: 0.9830501}
+  m_LocalRotation: {x: 0.09939481, y: 0.1266051, z: -0.012751205, w: 0.9868785}
   m_LocalPosition: {x: -111.2, y: 231.3, z: -904.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -681,6 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994bfcaa53673784581c22c8afd2c90e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaneController
+  smoothSpeed: 4
 --- !u!4 &1920523103
 Transform:
   m_ObjectHideFlags: 0
@@ -846,6 +847,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8897093224900880590, guid: 8025becbd9f46ea4fbf25c6be1920055, type: 3}
   m_PrefabInstance: {fileID: 2002600614}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2063535010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2063535012}
+  - component: {fileID: 2063535011}
+  m_Layer: 0
+  m_Name: SensorHUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2063535011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063535010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e08f3787a9e234592bc13df9586b35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SensorHUD
+  drone: {fileID: 1920523103}
+  statusPort: 5054
+  barHeight: 132
+  bottomMargin: 46
+--- !u!4 &2063535012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063535010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -856,3 +905,4 @@ SceneRoots:
   - {fileID: 1920523103}
   - {fileID: 1552165718}
   - {fileID: 1612412058}
+  - {fileID: 2063535012}
