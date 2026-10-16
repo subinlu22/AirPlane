@@ -14,7 +14,7 @@ public class SensorHUD : MonoBehaviour
 {
     public Transform drone;                 // 센서로 움직이는 DroneRig (비우면 이름으로 찾음)
     public int statusPort = 5054;
-    public float barHeight = 132f;
+    public float barHeight = 150f;
     public float bottomMargin = 46f;        // 하단 Google/Cesium 출처 표시를 가리지 않게 띄움
 
     // ── 상태 수신 (별도 스레드) ──────────────────────
@@ -29,13 +29,13 @@ public class SensorHUD : MonoBehaviour
     int okCount;
 
     // ── UI ─────────────────────────────────────────
-    static readonly Color Panel  = new Color(0.03f, 0.05f, 0.08f, 0.80f);
+    static readonly Color Panel  = new Color(0.03f, 0.05f, 0.08f, 0.88f);
     static readonly Color Accent = new Color(0.35f, 0.85f, 1f, 0.9f);
     static readonly Color Green  = new Color(0.30f, 0.95f, 0.55f);
     static readonly Color Amber  = new Color(1f, 0.72f, 0.25f);
     static readonly Color Red    = new Color(1f, 0.35f, 0.35f);
-    static readonly Color Dim    = new Color(0.55f, 0.63f, 0.74f);
-    const string DimHex = "#8C9FB8";
+    static readonly Color Dim    = new Color(0.66f, 0.73f, 0.83f);
+    const string DimHex = "#A9BBD3";
 
     Font font;
     Image recvDot, sensorDot;
@@ -212,13 +212,13 @@ public class SensorHUD : MonoBehaviour
         var s1 = Section(row, "LINK STATUS", 1.5f);
         recvDot = DotRow(s1, out recvText);
         sensorDot = DotRow(s1, out sensorText);
-        hintText = NewText(s1, "", 14, Dim);
+        hintText = NewText(s1, "", 16, Dim); hintText.fontStyle = FontStyle.Bold;
         Divider(row);
         // 2. 통신
-        linkText = NewText(Section(row, "TELEMETRY", 1.0f), "", 17, Color.white);
+        linkText = NewText(Section(row, "TELEMETRY", 1.0f), "", 21, Color.white);
         Divider(row);
         // 3. 센서 원값
-        rawText = NewText(Section(row, "RAW ACCEL  (MPU)", 1.0f), "", 17, Color.white);
+        rawText = NewText(Section(row, "RAW ACCEL  (MPU)", 1.0f), "", 21, Color.white);
         Divider(row);
         // 4. 자세
         var s4 = Section(row, "ATTITUDE", 1.4f);
@@ -226,15 +226,15 @@ public class SensorHUD : MonoBehaviour
         var ah = attRow.gameObject.AddComponent<HorizontalLayoutGroup>();
         ah.spacing = 16; ah.childAlignment = TextAnchor.MiddleLeft;
         ah.childControlWidth = true; ah.childControlHeight = true; ah.childForceExpandWidth = false; ah.childForceExpandHeight = false;
-        attRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 78;
+        attRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 92;
         BuildIndicator(attRow);
-        attText = NewText(attRow, "", 18, Color.white);
+        attText = NewText(attRow, "", 22, Color.white);
         Divider(row);
         // 5. 좌표
-        posText = NewText(Section(row, "POSITION  (WGS84)", 1.4f), "", 17, Color.white);
+        posText = NewText(Section(row, "POSITION  (WGS84)", 1.5f), "", 21, Color.white);
         Divider(row);
         // 6. 비행
-        flightText = NewText(Section(row, "FLIGHT", 1.0f), "", 17, Color.white);
+        flightText = NewText(Section(row, "FLIGHT", 1.0f), "", 21, Color.white);
     }
 
     // 자세계: 하늘/땅이 롤만큼 돌고 피치만큼 위아래로 움직임, 가운데 노란 기체 표시는 고정
@@ -242,7 +242,7 @@ public class SensorHUD : MonoBehaviour
     {
         var frame = NewImage("Indicator", parent, new Color(1, 1, 1, 0.25f));
         var le = frame.gameObject.AddComponent<LayoutElement>();
-        le.preferredWidth = 78; le.preferredHeight = 78; le.flexibleWidth = 0;
+        le.preferredWidth = 90; le.preferredHeight = 90; le.flexibleWidth = 0;
         var inner = NewImage("Inner", frame.transform, Color.black).rectTransform;
         inner.anchorMin = Vector2.zero; inner.anchorMax = Vector2.one; inner.offsetMin = new Vector2(1, 1); inner.offsetMax = new Vector2(-1, -1);
         inner.gameObject.AddComponent<RectMask2D>();
@@ -277,9 +277,9 @@ public class SensorHUD : MonoBehaviour
         var le = rt.gameObject.AddComponent<LayoutElement>();
         le.flexibleWidth = flex; le.minWidth = 120;
         var v = rt.gameObject.AddComponent<VerticalLayoutGroup>();
-        v.padding = new RectOffset(20, 12, 14, 10); v.spacing = 5;
+        v.padding = new RectOffset(22, 14, 14, 10); v.spacing = 4;
         v.childControlWidth = true; v.childControlHeight = true; v.childForceExpandWidth = true; v.childForceExpandHeight = false;
-        NewText(rt, title, 12, Accent).fontStyle = FontStyle.Bold;
+        NewText(rt, title, 15, Accent).fontStyle = FontStyle.Bold;
         return rt;
     }
 
@@ -297,8 +297,8 @@ public class SensorHUD : MonoBehaviour
         hl.childControlWidth = true; hl.childControlHeight = true; hl.childForceExpandWidth = false; hl.childForceExpandHeight = false;
         var dot = NewImage("Dot", r, Dim);
         var le = dot.gameObject.AddComponent<LayoutElement>();
-        le.preferredWidth = 10; le.preferredHeight = 10; le.flexibleWidth = 0;
-        label = NewText(r, "", 18, Color.white);
+        le.preferredWidth = 12; le.preferredHeight = 12; le.flexibleWidth = 0;
+        label = NewText(r, "", 21, Color.white);
         return dot;
     }
 
@@ -326,7 +326,9 @@ public class SensorHUD : MonoBehaviour
         t.alignment = TextAnchor.UpperLeft;
         t.horizontalOverflow = HorizontalWrapMode.Overflow;
         t.verticalOverflow = VerticalWrapMode.Overflow;
-        t.lineSpacing = 1.1f;
+        t.lineSpacing = 1.05f;
+        var shadow = t.gameObject.AddComponent<Shadow>();   // 밝은 배경에서도 글씨가 또렷하게
+        shadow.effectColor = new Color(0, 0, 0, 0.75f); shadow.effectDistance = new Vector2(1.2f, -1.2f);
         return t;
     }
 }

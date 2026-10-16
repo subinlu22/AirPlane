@@ -10,8 +10,8 @@ public class DroneFPV : MonoBehaviour
     public float fieldOfView = 78f;
     public float tiltDown = 12f;             // 카메라를 살짝 아래로 (도)
     public float forwardOffset = 0.6f;       // 드론 몸체·짐벌이 화면을 가리지 않게 앞으로 뺀 거리 (m)
-    public Vector2 size = new Vector2(420, 236);
-    public Vector2 margin = new Vector2(24, 194);   // 오른쪽, 아래 (아래는 HUD 바 위로)
+    public Vector2 size = new Vector2(480, 270);
+    public Vector2 margin = new Vector2(24, 214);   // 오른쪽, 아래 (아래는 HUD 바 위로)
 
     Camera cam;
     RenderTexture rt;
@@ -87,16 +87,17 @@ public class DroneFPV : MonoBehaviour
         viewRect.anchorMin = Vector2.zero; viewRect.anchorMax = Vector2.one; viewRect.offsetMin = new Vector2(2, 2); viewRect.offsetMax = new Vector2(-2, -2);
 
         // 위쪽 라벨 띠
-        var strip = NewImage("Label Strip", viewRect, new Color(0.03f, 0.05f, 0.08f, 0.65f)).rectTransform;
+        var strip = NewImage("Label Strip", viewRect, new Color(0.03f, 0.05f, 0.08f, 0.82f)).rectTransform;
         strip.anchorMin = new Vector2(0, 1); strip.anchorMax = new Vector2(1, 1); strip.pivot = new Vector2(0.5f, 1);
-        strip.sizeDelta = new Vector2(0, 26);
+        strip.sizeDelta = new Vector2(0, 34);
         recDot = NewImage("Rec", strip, new Color(1f, 0.3f, 0.3f));
         var dotRect = recDot.rectTransform;
-        dotRect.anchorMin = dotRect.anchorMax = new Vector2(0, 0.5f); dotRect.sizeDelta = new Vector2(9, 9); dotRect.anchoredPosition = new Vector2(14, 0);
-        var label = NewText(strip, "FPV  ·  DRONE CAM", 13, Color.white, font);
-        label.rectTransform.offsetMin = new Vector2(26, 0);
+        dotRect.anchorMin = dotRect.anchorMax = new Vector2(0, 0.5f); dotRect.sizeDelta = new Vector2(12, 12); dotRect.anchoredPosition = new Vector2(17, 0);
+        var label = NewText(strip, "FPV  ·  DRONE CAM", 18, Color.white, font);
+        label.rectTransform.offsetMin = new Vector2(34, 0);
         label.fontStyle = FontStyle.Bold;
-        var live = NewText(strip, "LIVE ", 12, new Color(0.35f, 0.85f, 1f), font);
+        var live = NewText(strip, "LIVE ", 16, new Color(0.35f, 0.85f, 1f), font);
+        live.fontStyle = FontStyle.Bold;
         live.alignment = TextAnchor.MiddleRight;
         live.rectTransform.offsetMax = new Vector2(-10, 0);
 
@@ -122,6 +123,8 @@ public class DroneFPV : MonoBehaviour
         t.transform.SetParent(parent, false);
         t.font = font; t.fontSize = size; t.color = c; t.text = s;
         t.alignment = TextAnchor.MiddleLeft; t.raycastTarget = false;
+        var shadow = t.gameObject.AddComponent<Shadow>();   // 밝은 영상 위에서도 글씨가 또렷하게
+        shadow.effectColor = new Color(0, 0, 0, 0.8f); shadow.effectDistance = new Vector2(1.2f, -1.2f);
         var textRect = t.rectTransform; textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one; textRect.offsetMin = textRect.offsetMax = Vector2.zero;
         return t;
     }
