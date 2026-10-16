@@ -52,3 +52,6 @@
 
 # 4K 스샷 저장 폴더
 /Screenshots/
+
+# 파이썬 캐시
+__pycache__/
