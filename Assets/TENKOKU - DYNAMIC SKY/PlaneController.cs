@@ -16,6 +16,8 @@ public class PlaneController : MonoBehaviour
     float rotY = 0f;
     float rotZ = 0f;
     public float smoothSpeed = 4f;   // 클수록 빠르게 반응, 작을수록 부드러움
+    public bool invertRoll = true;   // 좌우 기울기 방향 뒤집기 (손을 왼쪽으로 꺾으면 드론도 왼쪽)
+    public bool invertPitch = false; // 앞뒤 기울기 방향 뒤집기
 
     void Start()
     {
@@ -57,7 +59,10 @@ public class PlaneController : MonoBehaviour
         float roll = (rotY - 0) / 16384f * 45f;
 
         // 비행기 회전 적용
-         Quaternion target = Quaternion.Euler(-pitch, -90f, roll);
+        // pitch(센서 X) → 드론 좌우 기울기, roll(센서 Y) → 드론 앞뒤 기울기
+        float bank = invertRoll ? pitch : -pitch;
+        float nose = invertPitch ? -roll : roll;
+        Quaternion target = Quaternion.Euler(bank, -90f, nose);
         float follow = 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Slerp(transform.rotation, target, follow);
 

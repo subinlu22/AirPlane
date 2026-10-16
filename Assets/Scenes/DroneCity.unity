@@ -682,6 +682,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaneController
   smoothSpeed: 4
+  invertRoll: 1
+  invertPitch: 0
 --- !u!4 &1920523103
 Transform:
   m_ObjectHideFlags: 0
