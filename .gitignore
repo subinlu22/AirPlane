@@ -49,3 +49,6 @@
 /Assets/CesiumSettings/Resources/CesiumIonServers/*.asset.meta
 /Assets/CesiumSettings/Resources/CesiumRuntimeSettings.asset
 /Assets/CesiumSettings/Resources/CesiumRuntimeSettings.asset.meta
+
+# 4K 스샷 저장 폴더
+/Screenshots/
