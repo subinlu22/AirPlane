@@ -25,7 +25,7 @@ public class DroneFPV : MonoBehaviour
                 if (t.name.StartsWith("camera_jnt")) { mount = t; break; }
         if (mount == null) mount = drone;
 
-        rt = new RenderTexture(960, 540, 24, RenderTextureFormat.ARGB32) { name = "FPV_RT", antiAliasing = 2 };
+        rt = new RenderTexture(640, 360, 24, RenderTextureFormat.ARGB32) { name = "FPV_RT", antiAliasing = 2 };   // 미니 화면이라 이 정도면 충분 (높이면 지도 로딩이 무거워짐)
 
         var camGO = new GameObject("FPV Camera");
         cam = camGO.AddComponent<Camera>();

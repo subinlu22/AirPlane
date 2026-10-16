@@ -489,12 +489,12 @@ MonoBehaviour:
   _ionAssetID: 2275207
   _ionAccessToken: 
   _ionServer: {fileID: 11400000, guid: 0ac42b354ec63a54780cb87677c13a5e, type: 2}
-  _maximumScreenSpaceError: 8
+  _maximumScreenSpaceError: 12
   _preloadAncestors: 1
   _preloadSiblings: 1
   _forbidHoles: 0
-  _maximumSimultaneousTileLoads: 20
-  _maximumCachedBytes: 536870912
+  _maximumSimultaneousTileLoads: 48
+  _maximumCachedBytes: 1610612736
   _loadingDescendantLimit: 20
   _enableFrustumCulling: 1
   _enableFogCulling: 1
@@ -512,7 +512,7 @@ MonoBehaviour:
   _showTilesInHierarchy: 0
   _updateInEditor: 1
   _logSelectionStats: 0
-  _createPhysicsMeshes: 1
+  _createPhysicsMeshes: 0
 --- !u!1 &1552165713
 GameObject:
   m_ObjectHideFlags: 0
