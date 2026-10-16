@@ -34,6 +34,8 @@ public class DroneFPV : MonoBehaviour
         cam.nearClipPlane = 0.05f;
         cam.farClipPlane = 30000f;
         cam.depth = -10;
+        int minimapLayer = LayerMask.NameToLayer("Minimap");
+        if (minimapLayer >= 0) cam.cullingMask &= ~(1 << minimapLayer);   // 미니맵 전용 저해상도 지도는 안 보이게
         var data = camGO.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
         data.renderPostProcessing = true;
         data.volumeLayerMask = 0;            // 메인 화면용 아웃포커스·비네트는 적용 안 함 (거리 안개는 적용됨)

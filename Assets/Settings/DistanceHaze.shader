@@ -53,6 +53,7 @@ Shader "Hidden/DistanceHaze"
             {
                 float2 uv = input.texcoord;
                 half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+                if (unity_OrthoParams.w > 0.5) return col;   // 위에서 내려다보는 미니맵(직교 카메라)에는 안개·구름 적용 안 함
                 float raw = SampleSceneDepth(uv);
             #if UNITY_REVERSED_Z
                 bool isSky = raw <= 0.000001;
