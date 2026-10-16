@@ -163,7 +163,7 @@ public class SensorHUD : MonoBehaviour
         float inst = (drone.position - prevPos).magnitude / dt;
         speed = Mathf.Lerp(speed, inst, 0.1f);
         prevPos = drone.position;
-        float hdg = (Mathf.Atan2(nose.x, nose.z) * Mathf.Rad2Deg + 360f) % 360f;
+        float hdg = Mathf.Repeat(Mathf.Round(Mathf.Atan2(nose.x, nose.z) * Mathf.Rad2Deg), 360f);   // 0~359 (360 으로 표시되지 않게)
 
         // 좌표 (Cesium: 유니티 좌표 → 지구 중심 좌표 → 위도·경도·고도)
         if (geo != null)
