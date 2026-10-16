@@ -1,5 +1,6 @@
-// 거리 안개 (Full Screen Pass 용) — 깊이로 카메라와의 거리를 구해 멀수록 안개 색으로 섞음
-// Unity 기본 포그가 적용되지 않는 Cesium 지도에도 먹도록 화면 전체에 후처리로 적용
+// 거리 안개 + 구름 (Full Screen Pass 용)
+// - 땅: 깊이로 카메라와의 거리를 구해 멀수록 안개 색으로 섞음 (Unity 기본 포그가 안 먹는 Cesium 지도에도 적용)
+// - 하늘: 지평선 쪽은 같은 안개 색으로 이어서 땅/하늘 경계 선이 안 보이게, 위쪽엔 흘러가는 옅은 구름
 Shader "Hidden/DistanceHaze"
 {
     Properties
@@ -7,8 +8,14 @@ Shader "Hidden/DistanceHaze"
         _FogColor ("Fog Color", Color) = (0.80, 0.86, 0.93, 1)
         _Start ("Start Distance", Float) = 500
         _Density ("Density", Float) = 0.00045
-        _MaxFog ("Max Fog", Range(0, 1)) = 0.92
-        _SkyHaze ("Sky Horizon Haze", Range(0, 1)) = 0.6
+        _HorizonBand ("Sky Horizon Band", Range(0.02, 0.6)) = 0.18
+        _CloudColor ("Cloud Color", Color) = (1, 1, 1, 1)
+        _CloudShadow ("Cloud Shadow Color", Color) = (0.72, 0.78, 0.86, 1)
+        _CloudCover ("Cloud Cover", Range(0, 1)) = 0.42
+        _CloudSoftness ("Cloud Softness", Range(0.01, 0.5)) = 0.22
+        _CloudOpacity ("Cloud Opacity", Range(0, 1)) = 0.85
+        _CloudScale ("Cloud Scale", Float) = 1.6
+        _CloudSpeed ("Cloud Speed", Float) = 0.01
     }
     SubShader
     {
@@ -24,11 +31,23 @@ Shader "Hidden/DistanceHaze"
             #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
-            float4 _FogColor;
-            float _Start;
-            float _Density;
-            float _MaxFog;
-            float _SkyHaze;
+            float4 _FogColor, _CloudColor, _CloudShadow;
+            float _Start, _Density, _HorizonBand;
+            float _CloudCover, _CloudSoftness, _CloudOpacity, _CloudScale, _CloudSpeed;
+
+            float Hash(float2 p) { p = frac(p * float2(123.34, 456.21)); p += dot(p, p + 45.32); return frac(p.x * p.y); }
+            float Noise(float2 p)
+            {
+                float2 i = floor(p), f = frac(p);
+                float2 u = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(Hash(i), Hash(i + float2(1, 0)), u.x), lerp(Hash(i + float2(0, 1)), Hash(i + float2(1, 1)), u.x), u.y);
+            }
+            float Fbm(float2 p)
+            {
+                float v = 0.0, a = 0.5;
+                for (int k = 0; k < 5; k++) { v += a * Noise(p); p = p * 2.03 + 17.1; a *= 0.5; }
+                return v;
+            }
 
             half4 Frag(Varyings input) : SV_Target
             {
@@ -40,20 +59,30 @@ Shader "Hidden/DistanceHaze"
             #else
                 bool isSky = raw >= 0.999999;
             #endif
-                float f;
                 if (isSky)
                 {
-                    // 하늘: 지평선 근처만 살짝 뿌옇게 (지도 끝과 하늘 경계를 자연스럽게)
                     float3 dir = normalize(ComputeWorldSpacePosition(uv, 0.5, UNITY_MATRIX_I_VP) - _WorldSpaceCameraPos);
-                    f = _SkyHaze * saturate(1.0 - dir.y * 6.0);
+                    float up = max(dir.y, 0.0);
+
+                    // 구름: 하늘 돔에 노이즈를 투영하고 천천히 흘려보냄
+                    float2 cuv = dir.xz / (up + 0.12) * _CloudScale + _Time.y * _CloudSpeed * float2(1.0, 0.4);
+                    float n = Fbm(cuv);
+                    float cloud = smoothstep(_CloudCover, _CloudCover + _CloudSoftness, n);
+                    float shade = smoothstep(_CloudCover, _CloudCover + 0.45, Fbm(cuv + 0.35));   // 두꺼운 곳은 밝게, 가장자리는 살짝 그늘
+                    float3 cloudCol = lerp(_CloudShadow.rgb, _CloudColor.rgb, shade);
+                    cloud *= _CloudOpacity * smoothstep(0.0, 0.25, up);                         // 지평선 쪽 구름은 안개 속으로 사라짐
+                    col.rgb = lerp(col.rgb, cloudCol, cloud);
+
+                    // 지평선: 땅의 먼 안개와 같은 색으로 이어지게 (경계 선 제거)
+                    float h = 1.0 - smoothstep(0.0, _HorizonBand, up);
+                    col.rgb = lerp(col.rgb, _FogColor.rgb, h * h);
                 }
                 else
                 {
                     float d = LinearEyeDepth(raw, _ZBufferParams);
-                    f = 1.0 - exp(-_Density * max(0.0, d - _Start));
+                    float f = 1.0 - exp(-_Density * max(0.0, d - _Start));
+                    col.rgb = lerp(col.rgb, _FogColor.rgb, saturate(f));
                 }
-                f = min(saturate(f), _MaxFog);
-                col.rgb = lerp(col.rgb, _FogColor.rgb, f);
                 return col;
             }
             ENDHLSL
