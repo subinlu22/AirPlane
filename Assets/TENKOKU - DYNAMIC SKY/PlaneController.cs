@@ -19,8 +19,20 @@ public class PlaneController : MonoBehaviour
     public bool invertRoll = true;   // 좌우 기울기 방향 뒤집기 (손을 왼쪽으로 꺾으면 드론도 왼쪽)
     public bool invertPitch = false; // 앞뒤 기울기 방향 뒤집기
 
+    // 비행 설정
+    public float speed = 18f;          // 전진 속도 (m/s)
+    public float turnRate = 1.2f;      // 좌우로 1° 기울일 때 초당 선회 각도 (30° 기울이면 초당 36°)
+    public float turnDeadzone = 3f;    // 이 각도 이하로 기울이면 선회하지 않고 직진 (센서 떨림 무시)
+    public float minAltitude = 120f;   // 고도 제한 (빌딩에 박히지 않게)
+    public float maxAltitude = 600f;
+
+    float heading;                     // 현재 진행 방향 (Y 회전, 도)
+    float curBank, curNose;            // 부드럽게 따라가는 현재 기울기
+
     void Start()
     {
+        heading = transform.eulerAngles.y;   // 씬에 놓인 방향에서 출발
+
         // UDP 소켓 열기
         udpClient = new UdpClient(port);
         receiveThread = new Thread(ReceiveData);
@@ -62,13 +74,21 @@ public class PlaneController : MonoBehaviour
         // pitch(센서 X) → 드론 좌우 기울기, roll(센서 Y) → 드론 앞뒤 기울기
         float bank = invertRoll ? pitch : -pitch;
         float nose = invertPitch ? -roll : roll;
-        Quaternion target = Quaternion.Euler(bank, -90f, nose);
+        // 센서 값이 0.5초마다 오므로 목표 기울기로 부드럽게 따라감
         float follow = 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target, follow);
+        curBank = Mathf.Lerp(curBank, bank, follow);
+        curNose = Mathf.Lerp(curNose, nose, follow);
 
-        // 비행기 정면(X축)으로 이동
-        float speed = 10f;
+        // 기울인 쪽으로 선회 (왼쪽으로 기울이면 왼쪽으로 돌아감)
+        float turnBank = Mathf.Abs(curBank) > turnDeadzone ? curBank - Mathf.Sign(curBank) * turnDeadzone : 0f;
+        heading -= turnBank * turnRate * Time.deltaTime;
+        transform.rotation = Quaternion.Euler(curBank, heading, curNose);
+
+        // 기수 방향(X축)으로 이동 — 기수를 들면 상승, 숙이면 하강
         transform.position += transform.right * speed * Time.deltaTime;
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Clamp(pos.y, minAltitude, maxAltitude);
+        transform.position = pos;
         
     }
 
