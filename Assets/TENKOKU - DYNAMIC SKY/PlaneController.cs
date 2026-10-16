@@ -15,6 +15,7 @@ public class PlaneController : MonoBehaviour
     float rotX = 0f;
     float rotY = 0f;
     float rotZ = 0f;
+    public float smoothSpeed = 4f;   // 클수록 빠르게 반응, 작을수록 부드러움
 
     void Start()
     {
@@ -56,11 +57,14 @@ public class PlaneController : MonoBehaviour
         float roll = (rotY - 0) / 16384f * 45f;
 
         // 비행기 회전 적용
-        transform.rotation = Quaternion.Euler(-pitch, -90f, roll);
+         Quaternion target = Quaternion.Euler(-pitch, -90f, roll);
+        float follow = 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target, follow);
 
         // 비행기 정면(X축)으로 이동
         float speed = 10f;
         transform.position += transform.right * speed * Time.deltaTime;
+        
     }
 
     void OnDestroy()
