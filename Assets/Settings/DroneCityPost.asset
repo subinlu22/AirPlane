@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.45
+    m_Value: 0.25
   contrast:
     m_OverrideState: 1
     m_Value: 10
@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: NamsanPost
+  m_Name: DroneCityPost
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
   - {fileID: 2357389193852987821}
@@ -202,13 +202,13 @@ MonoBehaviour:
     m_Value: 1
   gaussianStart:
     m_OverrideState: 1
-    m_Value: 80
+    m_Value: 250
   gaussianEnd:
     m_OverrideState: 1
-    m_Value: 1800
+    m_Value: 4000
   gaussianMaxRadius:
     m_OverrideState: 1
-    m_Value: 1.1
+    m_Value: 0.6
   highQualitySampling:
     m_OverrideState: 1
     m_Value: 1
