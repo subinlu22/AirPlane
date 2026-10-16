@@ -24,5 +24,7 @@ print(f"MPU 데이터 수신 시작... ({PORT} → UDP {UDP_IP}:{UDP_PORT})")
 while True:
     line = ser.readline().decode('utf-8', errors='ignore').strip()
     if line and line.startswith("X:"):
+        if line == "X:-1 Y:-1 Z:-1":
+            continue   # 센서 응답 없음(접촉 불량) — 보내지 않고 마지막 자세 유지
         print(line)
         sock.sendto(line.encode(), (UDP_IP, UDP_PORT))
